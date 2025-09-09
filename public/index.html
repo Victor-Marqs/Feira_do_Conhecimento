@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <title>Meu Chat GPT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      /* ======== ESTILOS DO CHAT ======== */
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: #f6f6f6;
+      }
+      .chat {
+        width: min(720px, 90vw);
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.1);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .messages {
+        height: 50vh; 
+        padding: 16px;
+        overflow-y: auto; /* adiciona scroll quando cheio */
+      }
+      .msg {
+        padding: 10px 14px;
+        margin: 8px 0;
+        border-radius: 12px;
+        max-width: 70%;
+        line-height: 1.4;
+      }
+      .user {
+        background: #d1e7ff;
+        align-self: flex-end; /* mensagens do usuário à direita */
+      }
+      .bot {
+        background: #f1f3f4;
+        align-self: flex-start; /* mensagens do bot à esquerda */
+      }
+      .input-area {
+        display: flex;
+        padding: 12px;
+        border-top: 1px solid #eee;
+      }
+      .input-area input {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+      }
+      .input-area button {
+        margin-left: 8px;
+        padding: 12px 16px;
+        border: none;
+        border-radius: 12px;
+        background: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+      .input-area button:disabled {
+        background: #999;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat">
+      <!-- Onde ficam as mensagens -->
+      <div id="messages" class="messages"></div>
+
+      <!-- Área de input e botão -->
+      <form id="form" class="input-area">
+        <input id="input" type="text" placeholder="Digite sua mensagem..." required />
+        <button id="send" type="submit">Enviar</button>
+      </form>
+    </div>
+
+    <script>
+      // Selecionamos os elementos do DOM
+      const $messages = document.getElementById("messages");
+      const $form = document.getElementById("form");
+      const $input = document.getElementById("input");
+      const $send = document.getElementById("send");
+
+      // Histórico de mensagens (enviado para o servidor)
+      const history = [];
+
+      // Função para adicionar mensagens na tela
+      function addMessage(text, who) {
+        const div = document.createElement("div");
+        div.className = `msg ${who}`; // "msg user" ou "msg bot"
+        div.textContent = text;
+        $messages.appendChild(div);
+        $messages.scrollTop = $messages.scrollHeight; // rola para o fim
+      }
+
+      // Quando o usuário envia o formulário
+      $form.addEventListener("submit", async (e) => {
+        e.preventDefault(); // evita o reload da página
+
+        const text = $input.value.trim();
+        if (!text) return;
+        $input.value = "";
+
+        // Mostra a mensagem do usuário no chat
+        addMessage(text, "user");
+
+        // Desabilita o botão enquanto espera resposta
+        $send.disabled = true;
+
+        // Guarda a mensagem no histórico
+        history.push({ role: "user", content: text });
+
+        try {
+          // Chama a API do nosso backend
+          const resp = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: history })
+          });
+
+          const data = await resp.json();
+
+          // Mostra a resposta do bot
+          addMessage(data.reply || "(sem resposta)", "bot");
+
+          // Guarda a resposta no histórico
+          history.push({ role: "assistant", content: data.reply || "" });
+        } catch (err) {
+          addMessage("Erro: " + err.message, "bot");
+        } finally {
+          $send.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

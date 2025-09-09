@@ -1,0 +1,11 @@
+{
+  "name": "chat-local",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "openai": "^5.19.1"
+  }
+}
