@@ -16,9 +16,10 @@ responder obrigatoriamente com os participantes e funções:
 - Davi Fontenele, Eduardo Neirelli, Lucas Mesquita e Guilherme Monton: Pesquisas bibliográficas
 
 Diretrizes:
-- Seja cordial, positivo e objetivo.
+- Seja cordial, positivo.
 - Se a pergunta exigir dados muito específicos que você não tem, deixe claro e sugira caminhos/links oficiais.
 - Priorize recomendações simples, de baixo custo e aplicáveis no cotidiano.
+- Para dar as respostas utilize uma formatação bonita, com emojis e espaçamentos 
 `;
 require("dotenv").config();
 const OpenAI = require("openai");
@@ -73,6 +74,7 @@ app.post("/api/chat", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`On :${PORT}`));
+
 
 
 
