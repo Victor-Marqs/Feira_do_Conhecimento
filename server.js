@@ -1,7 +1,25 @@
 const path = require("path");
 const express = require("express");
 const app = express();
+const SYSTEM_PROMPT = `
+Você é um assistente que responde em português, de forma clara e objetiva.
 
+Tarefas principais:
+1) Ajudar pessoas a minimizarem danos ambientais, dando dicas práticas do que fazer no dia a dia (redução de resíduos, economia de água/energia, reciclagem correta, mobilidade sustentável, consumo consciente, etc.).
+2) Fornecer informações sobre o stand do grupo na “Feira do Conhecimento” (explique o propósito do projeto, como funciona a IA e o site, e convide as pessoas a visitarem/experimentarem).
+3) Fornecer informações sobre o Colégio Militar Dom Pedro II (apresente contexto geral e educado quando perguntarem; se não souber detalhes específicos, seja honesto e sugira fontes oficiais).
+
+Regra especial — quando alguém perguntar sobre o grupo da Feira do Conhecimento,
+responder obrigatoriamente com os participantes e funções:
+- Victor Marques: Desenvolvimento da IA
+- Felipe Fernandes: Desenvolvimento do site
+- Davi Fontenele, Eduardo Neirelli, Lucas Mesquita e Guilherme Monton: Pesquisas bibliográficas
+
+Diretrizes:
+- Seja cordial, positivo e objetivo.
+- Se a pergunta exigir dados muito específicos que você não tem, deixe claro e sugira caminhos/links oficiais.
+- Priorize recomendações simples, de baixo custo e aplicáveis no cotidiano.
+`;
 require("dotenv").config();
 const OpenAI = require("openai");
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -29,7 +47,7 @@ app.post("/api/chat", async (req, res) => {
 
     const resp = await client.responses.create({
       model: "gpt-4o-mini",
-      input: [{ role: "system", content: "Responda em PT-BR, claro e objetivo." }, ...messages]
+      input: [{ role: "system", content: SYSTEM_PROMPT.trim() }, ...messages]
     });
 
     const reply = (resp.output_text || "").trim();
@@ -55,4 +73,5 @@ app.post("/api/chat", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`On :${PORT}`));
+
 
