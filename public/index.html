@@ -99,7 +99,8 @@
       div.className = sender;
       // converte Markdown para HTML
       div.innerHTML = marked.parse(text);
-      chatBox.appendChild(div);
+      $messages.appendChild(div);
+      $messages.scrollTop = $messages.scrollHeight;
       }
 
 
@@ -144,6 +145,7 @@
     </script>
   </body>
 </html>
+
 
 
 
