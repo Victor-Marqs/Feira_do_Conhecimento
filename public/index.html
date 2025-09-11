@@ -26,7 +26,8 @@
         flex-direction: column;
       }
       .messages {
-        height: 100vh; 
+        min-height: 70vh; 
+        max-height: 75vh;
         padding: 16px;
         overflow-y: auto; /* adiciona scroll quando cheio */
       }
@@ -155,6 +156,7 @@ function addMessage(text, sender = "bot") {
     </script>
   </body>
 </html>
+
 
 
 
