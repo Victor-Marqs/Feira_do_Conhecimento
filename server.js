@@ -47,7 +47,7 @@ app.post("/api/chat", async (req, res) => {
 
     const resp = await client.responses.create({
       model: "gpt-4o-mini",
-      input: [{ role: "system", content: SYSTEM_PROMPT.trim(), "Responda SEMPRE em HTML formatado (use <ul>, <li>, <b>, <p>, etc.)." }, ...messages]
+      input: [{ role: "system", content: SYSTEM_PROMPT.trim()}, ...messages]
     });
 
     const reply = (resp.output_text || "").trim();
@@ -73,6 +73,7 @@ app.post("/api/chat", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`On :${PORT}`));
+
 
 
 
